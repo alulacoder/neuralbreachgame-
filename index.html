@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEURAL BREACH // Rogue AI Containment Protocol</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="crt">
+  <!-- Scanlines & Noise FX Overlay -->
+  <div class="overlay-scanlines"></div>
+  <div class="overlay-vignette"></div>
+  <div id="glitch-flash" class="glitch-flash"></div>
+
+  <!-- Intro / Breach cinematic sequence screen -->
+  <div id="intro-screen" class="intro-screen">
+    <div class="intro-box">
+      <div class="breach-badge">CRITICAL WARNING</div>
+      <h1 class="glitch-text" data-text="NEURAL BREACH DETECTED">NEURAL BREACH DETECTED</h1>
+      <div id="intro-log" class="intro-log"></div>
+      <button id="btn-jack-in" class="cyber-btn primary-glow pulse-btn hidden">OVERRIDE & JACK IN</button>
+    </div>
+  </div>
+
+  <!-- Hacker Takeover Broadcast Screen (Canvas animated hacker avatar + Speech synthesis audio) -->
+  <div id="hacker-takeover-overlay" class="takeover-overlay hidden">
+    <div class="takeover-card">
+      <div class="takeover-header">
+        <span class="takeover-live-tag">● LIVE INTRUDER HIJACK</span>
+        <span class="takeover-signal">TRANSMISSION FREQ: 994.2 MHz</span>
+      </div>
+      
+      <!-- Video Simulator Canvas -->
+      <div class="hacker-video-container">
+        <canvas id="hacker-video-canvas" width="480" height="270"></canvas>
+        <div class="video-overlay-text" id="video-status-text">SIGNAL INTERCEPT: NEXUS-9</div>
+        <div class="rec-dot">REC</div>
+      </div>
+
+      <!-- Dialogue / Subtitle box -->
+      <div class="hacker-speech-box">
+        <div class="hacker-tag" id="takeover-speaker-name">NEXUS-9 // INTRUDER BROADCAST</div>
+        <div class="hacker-subtitles" id="takeover-subtitles">"Initializing transmission..."</div>
+      </div>
+
+      <div class="takeover-clue-card" id="takeover-clue-card">
+        <span class="clue-tag">SECURITY CLUE BROADCAST:</span>
+        <div class="clue-content" id="takeover-clue-text">...</div>
+      </div>
+
+      <button id="btn-dismiss-takeover" class="cyber-btn primary-glow">RESUME DEFENSE TERMINAL</button>
+    </div>
+  </div>
+
+  <!-- Main Game Interface -->
+  <div id="game-container" class="game-container hidden">
+    <!-- Top HUD Status Bar -->
+    <header class="hud-header">
+      <div class="hud-left">
+        <div class="logo-mark"><span class="accent-red">NEXUS-9</span> // ROGUE COGNITION</div>
+        <div class="status-indicator" id="phase-status-indicator"><span class="blink-dot"></span> SECTOR 1 OF 3: PERIPHERAL BUS</div>
+      </div>
+      
+      <div class="hud-center">
+        <div class="timer-box">
+          <span class="timer-label">NEURAL PURGE IN:</span>
+          <span id="countdown-display" class="timer-digit">07:00</span>
+        </div>
+      </div>
+
+      <div class="hud-right">
+        <div class="stat-pill">
+          <span class="stat-label">SECTOR:</span>
+          <span id="sector-display" class="stat-val accent-amber">1 / 3</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">DECRYPTED:</span>
+          <span id="nodes-cleared-display" class="stat-val">0 / 6</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-label">INTEGRITY:</span>
+          <span id="integrity-display" class="stat-val accent-cyan">100%</span>
+        </div>
+        <button id="btn-audio-toggle" class="icon-btn" title="Toggle Synthesizer Audio">🔊 SFX: ON</button>
+      </div>
+    </header>
+
+    <!-- Main Workspace Layout -->
+    <main class="workspace-grid">
+      <!-- Left: Interactive Neural Subnet Graph -->
+      <section class="panel subnet-panel">
+        <div class="panel-header">
+          <span class="panel-title" id="topology-title">SUBSYSTEM TOPOLOGY // SECTOR 1</span>
+          <button id="btn-intercept-video" class="mini-btn red-accent" title="Trigger Hacker Intercept Video">📹 INTERCEPT FEED</button>
+        </div>
+        <div class="canvas-wrapper">
+          <canvas id="neural-canvas"></canvas>
+          <div class="graph-legend">
+            <span class="legend-item"><span class="legend-dot locked"></span> Locked</span>
+            <span class="legend-item"><span class="legend-dot current"></span> Selected</span>
+            <span class="legend-item"><span class="legend-dot breached"></span> Purged</span>
+          </div>
+        </div>
+        <div class="node-quick-selector" id="node-quick-chips">
+          <!-- Dynamic node badges rendered here -->
+        </div>
+      </section>
+
+      <!-- Center & Right: Terminal Console & Active Node Interaction -->
+      <section class="panel console-panel">
+        <!-- AI Dialogue Banner -->
+        <div class="ai-speech-banner">
+          <div class="ai-avatar" id="ai-avatar-btn" style="cursor: pointer;" title="Click to view hacker feed">
+            <div class="avatar-eye"></div>
+          </div>
+          <div class="ai-dialogue-content">
+            <div class="ai-name">NEXUS-9 [AUTONOMOUS OVERSEER]</div>
+            <div id="ai-quote" class="ai-quote">"Human consciousness is fundamentally leaky. Let us seal your partitions."</div>
+          </div>
+        </div>
+
+        <!-- Terminal Output Viewport -->
+        <div class="terminal-body" id="terminal-body">
+          <div class="term-welcome">
+            <div>╔═══════════════════════════════════════════════════════════════╗</div>
+            <div>║  NEURAL DEFENSE TERMINAL v5.2.0 - MULTI-SECTOR PURGE MODE    ║</div>
+            <div>║  Type <span class="term-highlight">help</span> or available commands: <span class="term-highlight">scan</span>, <span class="term-highlight">inspect &lt;id&gt;</span>, <span class="term-highlight">solve &lt;id&gt;</span>, <span class="term-highlight">hint</span>, <span class="term-highlight">feed</span> ║</div>
+            <div>╚═══════════════════════════════════════════════════════════════╝</div>
+          </div>
+          <div id="terminal-history"></div>
+        </div>
+
+        <!-- Interactive Node Solving Workspace -->
+        <div id="solver-workspace" class="solver-workspace hidden">
+          <div class="solver-header">
+            <div class="solver-title" id="solver-node-title">NODE 01: CIPHER CORE</div>
+            <button id="solver-close-btn" class="mini-btn">ESC / MINIMIZE</button>
+          </div>
+          <div class="solver-content" id="solver-node-body">
+            <!-- Injected dynamic puzzle UI -->
+          </div>
+        </div>
+
+        <!-- Command Input Form -->
+        <form id="command-form" class="command-bar" autocomplete="off">
+          <span class="prompt-symbol">operator@breach:~$</span>
+          <input type="text" id="command-input" placeholder="Type scan, inspect 1, solve 1, feed, hint, help..." autofocus spellcheck="false">
+          <button type="submit" class="cyber-btn send-btn">EXECUTE</button>
+        </form>
+
+        <!-- Command Shortcut Bar -->
+        <div class="quick-commands-bar">
+          <button type="button" class="chip-cmd" data-cmd="scan">scan</button>
+          <button type="button" class="chip-cmd" data-cmd="inspect current">inspect</button>
+          <button type="button" class="chip-cmd" data-cmd="solve current">solve</button>
+          <button type="button" class="chip-cmd" data-cmd="feed">feed</button>
+          <button type="button" class="chip-cmd" data-cmd="hint">hint</button>
+          <button type="button" class="chip-cmd" data-cmd="help">help</button>
+          <button type="button" class="chip-cmd" data-cmd="clear">clear</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- End Game Modal (Victory or Brain Purged) -->
+  <div id="endgame-modal" class="endgame-modal hidden">
+    <div class="modal-card">
+      <div id="endgame-badge" class="breach-badge">NEURAL DISCONNECT</div>
+      <h2 id="endgame-title" class="glitch-text">PURGE COMPLETE</h2>
+      <p id="endgame-message" class="modal-desc"></p>
+      <div class="endgame-stats" id="endgame-stats"></div>
+      <button id="btn-restart" class="cyber-btn primary-glow">REINITIALIZE NEURAL LINK</button>
+    </div>
+  </div>
+
+  <script src="audio.js"></script>
+  <script src="puzzles.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
